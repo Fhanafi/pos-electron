@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Point of Sale</title>
+</head>
+<body>
+    <h1>Point of Sale</h1>
+
+    <div>
+        <label for="product-input">Product:</label>
+        <input type="text" id="product-input" />
+
+        <label for="price-input">Price:</label>
+        <input type="number" id="price-input" />
+
+        <button onclick="addProduct()">Add</button>
+    </div>
+
+    <ul id="product-list"></ul>
+
+    <div>
+        <label for="total-price">Total Price:</label>
+        <span id="total-price">0</span>
+    </div>
+
+    <script>
+        
+        function addProduct() {
+            var productInput = document.getElementById('product-input');
+            var priceInput = document.getElementById('price-input');
+            var productName = productInput.value.trim();
+            var productPrice = parseFloat(priceInput.value);
+
+            if (productName !== '' && !isNaN(productPrice)) {
+                var productList = document.getElementById('product-list');
+
+              
+                var listItem = document.createElement('li');
+                listItem.textContent = productName + ' - Rp' + productPrice.toFixed(2);
+                productList.appendChild(listItem);
+
+                
+                var totalPriceElement = document.getElementById('total-price');
+                var totalPrice = parseFloat(totalPriceElement.textContent);
+                totalPrice += productPrice;
+                totalPriceElement.textContent = totalPrice.toFixed(2);
+                productInput.value = '';
+                priceInput.value = '';
+                saveProductList();
+            }
+        }
+
+        function saveProductList() {
+            var productList = document.getElementById('product-list');
+            var products = [];
+
+           
+            for (var i = 0; i < productList.children.length; i++) {
+                var product = productList.children[i].textContent;
+                products.push(product);
+            }
+            localStorage.setItem('productList', JSON.stringify(products));
+        }
+
+        function loadProductList() {
+            var productList = document.getElementById('product-list');
+            var savedProductList = localStorage.getItem('productList');
+
+            if (savedProductList) {
+                var products = JSON.parse(savedProductList);
+
+                // Menambahkan produk ke daftar
+                for (var i = 0; i < products.length; i++) {
+                    var listItem = document.createElement('li');
+                    listItem.textContent = products[i];
+                    productList.appendChild(listItem);
+                }
+            }
+        }
+
+
+        loadProductList();
+    </script>
+</body>
+</html>
